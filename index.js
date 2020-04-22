@@ -118,7 +118,7 @@ export default class RNModalPicker extends PureComponent {
                     ? this.props.selectedLabel
                     : this.props.placeHolderLabel,
                   this.props.pickerStyle,
-                  this.props.selectLabelTextStyle != undefined
+                  this.props.selectedLabel != undefined
                     ? this.props.selectLabelTextStyle
                     : this.props.placeHolderTextStyle,
                   this.props.dropDownImageStyle,
