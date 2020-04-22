@@ -12,6 +12,7 @@ import {
   I18nManager,
   TextInput,
 } from 'react-native';
+import {CheckBox} from 'react-native-elements';
 
 console.disableYellowBox = true;
 export default class RNModalPicker extends PureComponent {
@@ -19,7 +20,9 @@ export default class RNModalPicker extends PureComponent {
     super(props);
     this.state = {
       modalVisible: false,
+      isMultiChoice: this.props.multiChoice,
       dataSource: [],
+      choices: [],
     };
   }
 
@@ -32,7 +35,11 @@ export default class RNModalPicker extends PureComponent {
   ) {
     return (
       <View style={pickerStyle}>
-        <Text style={textStyle}>{defaultText}</Text>
+        {this.state.isMultiChoice ? (
+          <Text style={textStyle}>{'liste'}</Text>
+        ) : (
+          <Text style={textStyle}>{defaultText}</Text>
+        )}
         <Image
           style={dropDownImageStyle}
           resizeMode="contain"
@@ -43,7 +50,12 @@ export default class RNModalPicker extends PureComponent {
   }
 
   componentDidMount() {
-    this.setState({dataSource: this.props.dataSource});
+    console.log(this.props.defaultChecked);
+    this.setState({
+      dataSource: this.props.dataSource,
+      choices:
+        this.props.defaultChecked != null ? this.props.defaultChecked : [],
+    });
   }
 
   _searchFilterFunction(searchText, data) {
@@ -69,12 +81,76 @@ export default class RNModalPicker extends PureComponent {
       <TouchableOpacity
         activeOpacity={1}
         style={styles.listRowClickTouchStyle}
-        onPress={() => this._setSelectedIndex(index, item)}>
-        <View style={styles.listRowContainerStyle}>
+        onPress={
+          this.state.isMultiChoice
+            ? () => {
+                this.isChecked(item.id)
+                  ? this._setNotCheckedIndex(index, item)
+                  : this._setCheckedIndex(index, item);
+              }
+            : () => this._setSelectedIndex(index, item)
+        }>
+        <View
+          style={{...styles.listRowContainerStyle, flex: 1, height: '100%'}}>
           <Text style={this.props.pickerItemTextStyle}>{item.name}</Text>
         </View>
+        {this.state.isMultiChoice ? (
+          <CheckBox
+            title=""
+            wrapperStyle={{
+              justifyContent: 'center',
+            }}
+            containerStyle={{
+              // flex: 1,
+              backgroundColor: 'transparent',
+              borderWidth: 0,
+              justifyContent: 'center',
+              marginTop: -5,
+              // height: "80%"
+            }}
+            checked={this.isChecked(item.id)}
+            onPress={() => {
+              this.isChecked(item.id)
+                ? this._setNotCheckedIndex(index, item)
+                : this._setCheckedIndex(index, item);
+            }}
+            // style={{alignSelf: "center"}}
+          />
+        ) : null}
       </TouchableOpacity>
     );
+  }
+
+  isChecked(itemid) {
+    var exist = false;
+    this.state.choices.forEach((item) => {
+      if (item == itemid) {
+        exist = true;
+      }
+    });
+    return exist;
+  }
+
+  _setNotCheckedIndex(index, item) {
+    var tmp_choices = this.state.choices.filter((e) => e !== item.id);
+    this.setState({choices: tmp_choices});
+
+    this.props.selectedValue(index, item, tmp_choices);
+
+    // this.setState({modalVisible: false});
+  }
+
+  _setCheckedIndex(index, item) {
+    console.log(item);
+    var tmp_choices = [...this.state.choices, item.id];
+    console.log(tmp_choices);
+    this.setState({
+      choices: tmp_choices,
+    });
+
+    this.props.selectedValue(index, item, tmp_choices);
+
+    // this.setState({modalVisible: false});
   }
 
   _setSelectedIndex(index, item) {
@@ -185,6 +261,7 @@ RNModalPicker.defaultProps = {
   showSearchBar: false,
   showPickerTitle: false,
   disablePicker: false,
+  defaultChecked: [],
   changeAnimation: 'slide',
   dropDownImage: require('./res/ic_drop_down.png'),
   placeHolderLabel: 'Please select value from picker',
@@ -269,9 +346,11 @@ RNModalPicker.propTypes = {
   defaultSelected: PropTypes.any,
   showSearchBar: PropTypes.bool,
   showPickerTitle: PropTypes.bool,
+  multiChoice: PropTypes.bool,
   disablePicker: PropTypes.bool,
   changeAnimation: PropTypes.string,
   searchBarPlaceHolder: PropTypes.string,
+  defaultChecked: PropTypes.array,
   itemSeparatorStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
