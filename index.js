@@ -1,5 +1,5 @@
-import React, { PureComponent } from "react";
-import PropTypes from "prop-types";
+import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
 import {
   Text,
   View,
@@ -10,8 +10,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   I18nManager,
-  TextInput
-} from "react-native";
+  TextInput,
+} from 'react-native';
 
 console.disableYellowBox = true;
 export default class RNModalPicker extends PureComponent {
@@ -20,16 +20,16 @@ export default class RNModalPicker extends PureComponent {
     this.state = {
       modalVisible: false,
       selectedFlag: this.props.defaultValue,
-      dataSource: []
+      dataSource: [],
     };
   }
 
-   _setDefaultValue(
+  _setDefaultValue(
     defaultText,
     pickerStyle,
     textStyle,
     dropDownImageStyle,
-    dropDownImage
+    dropDownImage,
   ) {
     return (
       <View style={pickerStyle}>
@@ -43,12 +43,12 @@ export default class RNModalPicker extends PureComponent {
     );
   }
 
-   _setSelectedValue(
+  _setSelectedValue(
     defaultText,
     pickerStyle,
     textStyle,
     dropDownImageStyle,
-    dropDownImage
+    dropDownImage,
   ) {
     return (
       <View style={pickerStyle}>
@@ -63,38 +63,33 @@ export default class RNModalPicker extends PureComponent {
   }
 
   componentDidMount() {
-    this.setState({ dataSource: this.props.dataSource });
+    this.setState({dataSource: this.props.dataSource});
   }
 
   _searchFilterFunction(searchText, data) {
     let newData = [];
     if (searchText) {
-      newData = data.filter(function(item) {
+      newData = data.filter(function (item) {
         const itemData = item.name.toUpperCase();
         const textData = searchText.toUpperCase();
         return itemData.includes(textData);
       });
       this.setState({
-        dataSource: [...newData]
+        dataSource: [...newData],
       });
     } else {
-      this.setState({ dataSource: this.props.dataSource });
+      this.setState({dataSource: this.props.dataSource});
     }
   }
-  _flatListItemSeparator(itemSeparatorStyle){
-    return (
-      <View
-        style={itemSeparatorStyle}
-      />
-    );
+  _flatListItemSeparator(itemSeparatorStyle) {
+    return <View style={itemSeparatorStyle} />;
   }
   _renderItemListValues(item, index) {
     return (
       <TouchableOpacity
         activeOpacity={1}
         style={styles.listRowClickTouchStyle}
-        onPress={() => this._setSelectedIndex(index, item)}
-      >
+        onPress={() => this._setSelectedIndex(index, item)}>
         <View style={styles.listRowContainerStyle}>
           <Text style={this.props.pickerItemTextStyle}>{item.name}</Text>
         </View>
@@ -103,9 +98,9 @@ export default class RNModalPicker extends PureComponent {
   }
 
   _setSelectedIndex(index, item) {
-      this.props.selectedValue(index,item);
+    this.props.selectedValue(index, item);
 
-      this.setState({ selectedFlag: true ,modalVisible: false});
+    this.setState({selectedFlag: true, modalVisible: false});
   }
 
   render() {
@@ -115,16 +110,19 @@ export default class RNModalPicker extends PureComponent {
           <View>
             <TouchableOpacity
               disabled={this.props.disablePicker}
-              onPress={() => this.setState({ modalVisible: true })}
-              activeOpacity={0.7}
-            >
+              onPress={() => this.setState({modalVisible: true})}
+              activeOpacity={0.7}>
               <View>
                 {this._setSelectedValue(
-                  this.props.selectedLabel,
+                  this.props.selectedLabel != undefined
+                    ? this.props.selectedLabel
+                    : this.props.placeHolderLabel,
                   this.props.pickerStyle,
-                  this.props.selectLabelTextStyle,
+                  this.props.selectLabelTextStyle != undefined
+                    ? this.props.selectLabelTextStyle
+                    : this.props.placeHolderTextStyle,
                   this.props.dropDownImageStyle,
-                  this.props.dropDownImage
+                  this.props.dropDownImage,
                 )}
               </View>
             </TouchableOpacity>
@@ -134,16 +132,15 @@ export default class RNModalPicker extends PureComponent {
             <TouchableOpacity
               disabled={this.props.disablePicker}
               style={styles.picker}
-              onPress={() => this.setState({ modalVisible: true })}
-              activeOpacity={0.7}
-            >
+              onPress={() => this.setState({modalVisible: true})}
+              activeOpacity={0.7}>
               <View>
                 {this._setDefaultValue(
                   this.props.placeHolderLabel,
                   this.props.pickerStyle,
                   this.props.placeHolderTextStyle,
                   this.props.dropDownImageStyle,
-                  this.props.dropDownImage
+                  this.props.dropDownImage,
                 )}
               </View>
             </TouchableOpacity>
@@ -153,28 +150,26 @@ export default class RNModalPicker extends PureComponent {
         <Modal
           visible={this.state.modalVisible}
           transparent={true}
-          onShow={()=>this.setState({dataSource:this.props.dataSource})}
+          onShow={() => this.setState({dataSource: this.props.dataSource})}
           animationType={this.props.changeAnimation}
-          onRequestClose={() => this.setState({ modalVisible: false})}
-        >
+          onRequestClose={() => this.setState({modalVisible: false})}>
           <View style={styles.container}>
             <View style={styles.listDataContainerStyle}>
               <View style={styles.pickerTitleContainerStyle}>
                 {this.props.showPickerTitle ? (
                   <Text style={styles.pickerTitleTextStyle}>
-                    {" "}
+                    {' '}
                     {this.props.pickerTitle}
                   </Text>
                 ) : null}
 
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => this.setState({ modalVisible: false })}
-                >
+                  onPress={() => this.setState({modalVisible: false})}>
                   <Image
                     resizeMode="contain"
                     style={styles.crossImageStyle}
-                    source={require("./res/ic_cancel_grey.png")}
+                    source={require('./res/ic_cancel_grey.png')}
                   />
                 </TouchableOpacity>
               </View>
@@ -187,17 +182,17 @@ export default class RNModalPicker extends PureComponent {
                         /> */}
 
                   <TextInput
-                    onChangeText={text =>
+                    onChangeText={(text) =>
                       this._searchFilterFunction(
                         text,
-                        this.props.dummyDataSource
+                        this.props.dummyDataSource,
                       )
                     }
                     placeholder={this.props.searchBarPlaceHolder}
                     style={styles.textInputStyle}
                     underlineColorAndroid="transparent"
                     keyboardType="default"
-                    returnKeyType={"done"}
+                    returnKeyType={'done'}
                     blurOnSubmit={true}
                   />
                 </View>
@@ -205,15 +200,17 @@ export default class RNModalPicker extends PureComponent {
 
               <FlatList
                 style={styles.flatListStyle}
-                keyExtractor={item => item.name}
+                keyExtractor={(item) => item.name}
                 showsVerticalScrollIndicator={false}
                 extraData={this.state}
                 overScrollMode="never"
-                ItemSeparatorComponent={()=>this._flatListItemSeparator(this.props.itemSeparatorStyle)}
+                ItemSeparatorComponent={() =>
+                  this._flatListItemSeparator(this.props.itemSeparatorStyle)
+                }
                 keyboardShouldPersistTaps="always"
                 numColumns={1}
                 data={this.state.dataSource}
-                renderItem={({ item, index }) =>
+                renderItem={({item, index}) =>
                   this._renderItemListValues(item, index)
                 }
               />
@@ -229,60 +226,60 @@ RNModalPicker.defaultProps = {
   showSearchBar: false,
   showPickerTitle: false,
   disablePicker: false,
-  changeAnimation: "slide",
-  dropDownImage: require("./res/ic_drop_down.png"),
-  placeHolderLabel: "Please select value from picker",
-  searchBarPlaceHolder: "Search",
+  changeAnimation: 'slide',
+  dropDownImage: require('./res/ic_drop_down.png'),
+  placeHolderLabel: 'Please select value from picker',
+  searchBarPlaceHolder: 'Search',
 
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   selectLabelTextStyle: {
-    color: "#000",
-    textAlign: "left",
-    width: "99%",
+    color: '#000',
+    textAlign: 'left',
+    width: '99%',
     padding: 10,
-    flexDirection: "row"
+    flexDirection: 'row',
   },
   searchBarContainerStyle: {
     marginBottom: 10,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 40,
     shadowOpacity: 1.0,
     shadowRadius: 5,
     shadowOffset: {
       width: 1,
-      height: 1
+      height: 1,
     },
-    backgroundColor: "rgba(255,255,255,1)",
-    shadowColor: "#d3d3d3",
+    backgroundColor: 'rgba(255,255,255,1)',
+    shadowColor: '#d3d3d3',
     borderRadius: 10,
     elevation: 3,
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   placeHolderTextStyle: {
-    color: "#D3D3D3",
+    color: '#D3D3D3',
     padding: 10,
-    textAlign: "left",
-    width: "99%",
-    flexDirection: "row"
+    textAlign: 'left',
+    width: '99%',
+    flexDirection: 'row',
   },
   dropDownImageStyle: {
     marginLeft: 10,
     width: 10,
     height: 10,
-    alignSelf: "center"
+    alignSelf: 'center',
   },
   pickerItemTextStyle: {
-    color: "#000",
+    color: '#000',
     marginVertical: 10,
     flex: 0.9,
     marginLeft: 20,
     marginHorizontal: 10,
-    textAlign: "left"
+    textAlign: 'left',
   },
   pickerStyle: {
     marginLeft: 18,
@@ -293,15 +290,15 @@ RNModalPicker.defaultProps = {
     shadowOpacity: 1.0,
     shadowOffset: {
       width: 1,
-      height: 1
+      height: 1,
     },
     borderWidth: 1,
     shadowRadius: 10,
-    backgroundColor: "rgba(255,255,255,1)",
-    shadowColor: "#d3d3d3",
+    backgroundColor: 'rgba(255,255,255,1)',
+    shadowColor: '#d3d3d3',
     borderRadius: 5,
-    flexDirection: "row"
-  }
+    flexDirection: 'row',
+  },
 };
 RNModalPicker.propTypes = {
   placeHolderLabel: PropTypes.any,
@@ -317,115 +314,115 @@ RNModalPicker.propTypes = {
   disablePicker: PropTypes.bool,
   changeAnimation: PropTypes.string,
   searchBarPlaceHolder: PropTypes.string,
-  itemSeparatorStyle:PropTypes.oneOfType([
+  itemSeparatorStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
-  pickerItemTextStyle:PropTypes.oneOfType([
+  pickerItemTextStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
   dropDownImageStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
 
   selectLabelTextStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
 
   searchBarContainerStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
   placeHolderTextStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
   textStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
+    PropTypes.array,
   ]),
   pickerStyle: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.object,
-    PropTypes.array
-  ])
+    PropTypes.array,
+  ]),
 };
 const styles = StyleSheet.create({
   mainContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center"
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   pickerTitleContainerStyle: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "flex-end",
-    justifyContent: "flex-end",
-    alignSelf: "flex-end"
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
   },
   searchBarContainerStyle: {
     marginBottom: 10,
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 40,
     shadowOpacity: 1.0,
     shadowRadius: 5,
     shadowOffset: {
       width: 1,
-      height: 1
+      height: 1,
     },
-    backgroundColor: "rgba(255,255,255,1)",
-    shadowColor: "#d3d3d3",
+    backgroundColor: 'rgba(255,255,255,1)',
+    shadowColor: '#d3d3d3',
     borderRadius: 10,
     elevation: 3,
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
   },
 
   flatListStyle: {
-    maxHeight: "85%",
-    minHeight: "35%"
+    maxHeight: '85%',
+    minHeight: '35%',
   },
   iconGPSStyle: {
-    alignItems: "center",
-    alignSelf: "center",
+    alignItems: 'center',
+    alignSelf: 'center',
     height: 20,
     width: 20,
     margin: 5,
     transform: [
       {
-        scaleX: I18nManager.isRTL ? -1 : 1
-      }
-    ]
+        scaleX: I18nManager.isRTL ? -1 : 1,
+      },
+    ],
   },
 
   container: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    justifyContent: "center"
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
   },
   listRowContainerStyle: {
-    width: "100%",
-    justifyContent: "center"
+    width: '100%',
+    justifyContent: 'center',
   },
   textInputStyle: {
-    color: "black",
+    color: 'black',
     paddingLeft: 15,
-    marginTop: Platform.OS == "ios" ? 10 : 0,
-    marginBottom: Platform.OS == "ios" ? 10 : 0,
-    alignSelf: "center",
+    marginTop: Platform.OS == 'ios' ? 10 : 0,
+    marginBottom: Platform.OS == 'ios' ? 10 : 0,
+    alignSelf: 'center',
     flex: 1,
-    textAlign: I18nManager.isRTL ? "right" : "left"
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
   crossImageStyle: {
     width: 40,
@@ -433,24 +430,23 @@ const styles = StyleSheet.create({
     marginTop: -4,
 
     marginRight: -7,
-    alignItems: "flex-end",
-    justifyContent: "flex-start",
-    alignSelf: "flex-end"
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+    alignSelf: 'flex-end',
   },
 
   listDataContainerStyle: {
-    alignSelf: "center",
-    width: "90%",
+    alignSelf: 'center',
+    width: '90%',
     borderRadius: 10,
-    maxHeight: "80%",
-    backgroundColor: "white"
+    maxHeight: '80%',
+    backgroundColor: 'white',
   },
 
- 
   listRowClickTouchStyle: {
-    justifyContent: "center",
-    flexDirection: "row",
-    flex: 1
+    justifyContent: 'center',
+    flexDirection: 'row',
+    flex: 1,
   },
 
   pickerTitleTextStyle: {
@@ -458,9 +454,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingBottom: 10,
     marginLeft: 40,
-    color: "#000",
-    textAlign: "center"
-  }
+    color: '#000',
+    textAlign: 'center',
+  },
 });
 
 //AppRegistry.registerComponent ('RNModalPicker', () => App);
