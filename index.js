@@ -19,28 +19,8 @@ export default class RNModalPicker extends PureComponent {
     super(props);
     this.state = {
       modalVisible: false,
-      selectedFlag: this.props.defaultValue,
       dataSource: [],
     };
-  }
-
-  _setDefaultValue(
-    defaultText,
-    pickerStyle,
-    textStyle,
-    dropDownImageStyle,
-    dropDownImage,
-  ) {
-    return (
-      <View style={pickerStyle}>
-        <Text style={textStyle}>{defaultText}</Text>
-        <Image
-          style={dropDownImageStyle}
-          resizeMode="contain"
-          source={dropDownImage}
-        />
-      </View>
-    );
   }
 
   _setSelectedValue(
@@ -100,52 +80,32 @@ export default class RNModalPicker extends PureComponent {
   _setSelectedIndex(index, item) {
     this.props.selectedValue(index, item);
 
-    this.setState({selectedFlag: true, modalVisible: false});
+    this.setState({modalVisible: false});
   }
 
   render() {
     return (
       <View style={styles.mainContainer}>
-        {this.state.selectedFlag ? (
-          <View>
-            <TouchableOpacity
-              disabled={this.props.disablePicker}
-              onPress={() => this.setState({modalVisible: true})}
-              activeOpacity={0.7}>
-              <View>
-                {this._setSelectedValue(
-                  this.props.selectedLabel != undefined
-                    ? this.props.selectedLabel
-                    : this.props.placeHolderLabel,
-                  this.props.pickerStyle,
-                  this.props.selectedLabel != undefined
-                    ? this.props.selectLabelTextStyle
-                    : this.props.placeHolderTextStyle,
-                  this.props.dropDownImageStyle,
-                  this.props.dropDownImage,
-                )}
-              </View>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View>
-            <TouchableOpacity
-              disabled={this.props.disablePicker}
-              style={styles.picker}
-              onPress={() => this.setState({modalVisible: true})}
-              activeOpacity={0.7}>
-              <View>
-                {this._setDefaultValue(
-                  this.props.placeHolderLabel,
-                  this.props.pickerStyle,
-                  this.props.placeHolderTextStyle,
-                  this.props.dropDownImageStyle,
-                  this.props.dropDownImage,
-                )}
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View>
+          <TouchableOpacity
+            disabled={this.props.disablePicker}
+            onPress={() => this.setState({modalVisible: true})}
+            activeOpacity={0.7}>
+            <View>
+              {this._setSelectedValue(
+                this.props.selectedLabel != undefined
+                  ? this.props.selectedLabel
+                  : this.props.placeHolderLabel,
+                this.props.pickerStyle,
+                this.props.selectedLabel != undefined
+                  ? this.props.selectLabelTextStyle
+                  : this.props.placeHolderTextStyle,
+                this.props.dropDownImageStyle,
+                this.props.dropDownImage,
+              )}
+            </View>
+          </TouchableOpacity>
+        </View>
 
         <Modal
           visible={this.state.modalVisible}
@@ -222,7 +182,6 @@ export default class RNModalPicker extends PureComponent {
   }
 }
 RNModalPicker.defaultProps = {
-  defaultValue: false,
   showSearchBar: false,
   showPickerTitle: false,
   disablePicker: false,
@@ -308,7 +267,6 @@ RNModalPicker.propTypes = {
   dummyDataSource: PropTypes.any,
   dropDownImage: PropTypes.number,
   defaultSelected: PropTypes.any,
-  defaultValue: PropTypes.bool,
   showSearchBar: PropTypes.bool,
   showPickerTitle: PropTypes.bool,
   disablePicker: PropTypes.bool,
