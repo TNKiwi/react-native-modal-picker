@@ -36,7 +36,27 @@ export default class RNModalPicker extends PureComponent {
     return (
       <View style={pickerStyle}>
         {this.state.isMultiChoice ? (
-          <Text style={textStyle}>{'liste'}</Text>
+          <Text style={textStyle}>
+            {this.state.choices.length > 0
+              ? this.state.dataSource
+                ? this.state.dataSource.length > 0
+                  ? this.state.choices.map((selection, index) => {
+                      var toReturn = this.state.dataSource[selection - 1].name;
+                      if (
+                        index != this.state.choices.length - 1 &&
+                        this.state.choices.length > 1
+                      ) {
+                        toReturn = toReturn + ', ';
+                      }
+                      return toReturn;
+                    })
+                  : // this.getLabelForId(2,this.state.dataSource)
+                    defaultText
+                : defaultText
+              : defaultText}
+            {/* {this.state.choices.map((selection)=>{
+            })} */}
+          </Text>
         ) : (
           <Text style={textStyle}>{defaultText}</Text>
         )}
@@ -47,6 +67,24 @@ export default class RNModalPicker extends PureComponent {
         />
       </View>
     );
+  }
+
+  getLabelForId(id, source) {
+    console.log(id);
+    console.log(source);
+    if (source) {
+      source.forEach((element) => {
+        console.log(element.id);
+        console.log(id);
+        console.log(element.id == id);
+        if (element.id == id) {
+          console.log('true');
+          return element.name;
+        }
+      });
+    } else {
+      return '';
+    }
   }
 
   componentDidMount() {
@@ -141,9 +179,7 @@ export default class RNModalPicker extends PureComponent {
   }
 
   _setCheckedIndex(index, item) {
-    console.log(item);
     var tmp_choices = [...this.state.choices, item.id];
-    console.log(tmp_choices);
     this.setState({
       choices: tmp_choices,
     });
@@ -169,11 +205,13 @@ export default class RNModalPicker extends PureComponent {
             activeOpacity={0.7}>
             <View>
               {this._setSelectedValue(
-                this.props.selectedLabel != undefined
+                this.props.selectedLabel != undefined &&
+                  this.props.selectedLabel != []
                   ? this.props.selectedLabel
                   : this.props.placeHolderLabel,
                 this.props.pickerStyle,
-                this.props.selectedLabel != undefined
+                this.props.selectedLabel != undefined &&
+                  this.props.selectedLabel != []
                   ? this.props.selectLabelTextStyle
                   : this.props.placeHolderTextStyle,
                 this.props.dropDownImageStyle,
