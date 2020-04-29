@@ -61,7 +61,7 @@ export default class RNModalPicker extends PureComponent {
         ) : (
           <Text style={textStyle}>{defaultText}</Text>
         )}
-        {showDelete ? (
+        {showDelete && !this.props.disablePicker ? (
           <TouchableOpacity
             style={{...deleteImageStyle}}
             onPress={() => {
