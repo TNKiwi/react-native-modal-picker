@@ -332,6 +332,7 @@ RNModalPicker.defaultProps = {
   showPickerTitle: false,
   disablePicker: false,
   defaultChecked: [],
+  deleteAction: true,
   changeAnimation: 'slide',
   dropDownImage: require('./res/ic_drop_down.png'),
   deleteImage: require('./res/ic_cancel_red.png'),
