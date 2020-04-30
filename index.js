@@ -21,6 +21,7 @@ export default class RNModalPicker extends PureComponent {
     this.state = {
       modalVisible: false,
       isMultiChoice: this.props.multiChoice,
+      deleteAction: this.props.deleteAction,
       dataSource: [],
       choices: [],
     };
@@ -61,7 +62,7 @@ export default class RNModalPicker extends PureComponent {
         ) : (
           <Text style={textStyle}>{defaultText}</Text>
         )}
-        {showDelete && !this.props.disablePicker ? (
+        {this.state.deleteAction && showDelete && !this.props.disablePicker ? (
           <TouchableOpacity
             style={{...deleteImageStyle}}
             onPress={() => {
@@ -425,6 +426,7 @@ RNModalPicker.propTypes = {
   showSearchBar: PropTypes.bool,
   showPickerTitle: PropTypes.bool,
   multiChoice: PropTypes.bool,
+  deleteAction: PropTypes.bool,
   disablePicker: PropTypes.bool,
   changeAnimation: PropTypes.string,
   searchBarPlaceHolder: PropTypes.string,
