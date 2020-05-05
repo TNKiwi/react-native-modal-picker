@@ -45,7 +45,12 @@ export default class RNModalPicker extends PureComponent {
               ? this.state.dataSource
                 ? this.state.dataSource.length > 0
                   ? this.state.choices.map((selection, index) => {
-                      var toReturn = this.state.dataSource[selection - 1].name;
+                      var toReturn = '';
+                      this.state.dataSource.forEach((data) => {
+                        if (data.id == selection) {
+                          toReturn = data.name;
+                        }
+                      });
                       if (
                         index != this.state.choices.length - 1 &&
                         this.state.choices.length > 1
