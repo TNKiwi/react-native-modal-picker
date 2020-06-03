@@ -263,7 +263,8 @@ export default class RNModalPicker extends PureComponent {
           transparent={true}
           onShow={() => this.setState({dataSource: this.props.dataSource})}
           animationType={this.props.changeAnimation}
-          onRequestClose={() => this.setState({modalVisible: false})}>
+          onRequestClose={() => this.setState({modalVisible: false})}
+          onBackdropPress={() => this.setState({modalVisible: false})}>
           <View style={styles.container}>
             <View style={styles.listDataContainerStyle}>
               <View style={styles.pickerTitleContainerStyle}>
