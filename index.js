@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   I18nManager,
   TextInput,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {CheckBox} from 'react-native-elements';
 import {Button} from 'native-base';
@@ -226,7 +227,7 @@ export default class RNModalPicker extends PureComponent {
 
   render() {
     return (
-      <View style={styles.mainContainer}>
+      <View style={{...styles.mainContainer}}>
         <View>
           <TouchableOpacity
             disabled={this.props.disablePicker}
@@ -270,13 +271,23 @@ export default class RNModalPicker extends PureComponent {
             onPress={() => {
               this.setState({modalVisible: false});
             }}
-            style={{flex: 1}}>
-            <View style={styles.container}>
-              <View style={styles.listDataContainerStyle}>
-                <View style={styles.pickerTitleContainerStyle}>
+            style={{
+              flex: 1,
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+            }}>
+            <View style={{...styles.container}}>
+              <TouchableOpacity
+                activeOpacity={1}
+                style={{
+                  ...styles.listDataContainerStyle,
+                  maxHeight: '80%',
+                  flex: 1,
+                }}>
+                <View style={{...styles.pickerTitleContainerStyle, flex: 0}}>
                   {this.props.showPickerTitle ? (
                     <Text style={styles.pickerTitleTextStyle}>
-                      {' '}
                       {this.props.pickerTitle}
                     </Text>
                   ) : null}
@@ -292,7 +303,8 @@ export default class RNModalPicker extends PureComponent {
                   </TouchableOpacity>
                 </View>
                 {this.props.showSearchBar ? (
-                  <View style={this.props.searchBarContainerStyle}>
+                  <View
+                    style={{...this.props.searchBarContainerStyle, flex: 0}}>
                     {/* <Image
                           resizeMode="contain"
                           style={styles.iconGPSStyle}
@@ -315,44 +327,46 @@ export default class RNModalPicker extends PureComponent {
                     />
                   </View>
                 ) : null}
-
-                <FlatList
-                  style={styles.flatListStyle}
-                  keyExtractor={(item) => item.name}
-                  showsVerticalScrollIndicator={false}
-                  extraData={this.state}
-                  overScrollMode="never"
-                  ItemSeparatorComponent={() =>
-                    this._flatListItemSeparator(this.props.itemSeparatorStyle)
-                  }
-                  keyboardShouldPersistTaps="always"
-                  numColumns={1}
-                  data={this.state.dataSource}
-                  renderItem={({item, index}) =>
-                    this._renderItemListValues(item, index)
-                  }
-                />
-                {this.state.isMultiChoice ? (
-                  <View
-                    style={{
-                      flex: 1,
-                      height: 40,
-                      width: '100%',
-                      alignContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Button
-                      onPress={() => {
-                        this.setState({modalVisible: false});
-                      }}
-                      transparent
-                      full
-                      style={{alignContent: 'center', alignItems: 'center'}}>
-                      <Text style={{}}>Valider</Text>
-                    </Button>
-                  </View>
-                ) : null}
-              </View>
+                <View flexDirection="column" style={{flex: 1, width: '100%'}}>
+                  <FlatList
+                    style={{flex: 1, width: '100%', alignSelf: 'stretch'}}
+                    keyExtractor={(item) => item.name}
+                    showsVerticalScrollIndicator={false}
+                    extraData={this.state}
+                    overScrollMode="never"
+                    ItemSeparatorComponent={() =>
+                      this._flatListItemSeparator(this.props.itemSeparatorStyle)
+                    }
+                    keyboardShouldPersistTaps="always"
+                    numColumns={1}
+                    data={this.state.dataSource}
+                    renderItem={({item, index}) =>
+                      this._renderItemListValues(item, index)
+                    }
+                  />
+                  {this.state.isMultiChoice ? (
+                    <View
+                      style={{
+                        // flex: 1,
+                        flex: 0,
+                        // height: 20,
+                        width: '100%',
+                        alignContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Button
+                        onPress={() => {
+                          this.setState({modalVisible: false});
+                        }}
+                        transparent
+                        full
+                        style={{alignContent: 'center', alignItems: 'center'}}>
+                        <Text style={{}}>Valider</Text>
+                      </Button>
+                    </View>
+                  ) : null}
+                </View>
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         </Modal>
@@ -546,8 +560,8 @@ const styles = StyleSheet.create({
   },
 
   flatListStyle: {
-    maxHeight: '80%',
-    minHeight: '35%',
+    maxHeight: '85%',
+    minHeight: '20%',
   },
   iconGPSStyle: {
     alignItems: 'center',
@@ -595,7 +609,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '90%',
     borderRadius: 10,
-    maxHeight: '80%',
+    // maxHeight: '90%',
     backgroundColor: 'white',
   },
 
