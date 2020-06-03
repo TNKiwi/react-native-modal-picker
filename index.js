@@ -13,6 +13,7 @@ import {
   TextInput,
 } from 'react-native';
 import {CheckBox} from 'react-native-elements';
+import {Button} from 'native-base';
 
 console.disableYellowBox = true;
 export default class RNModalPicker extends PureComponent {
@@ -265,69 +266,95 @@ export default class RNModalPicker extends PureComponent {
           animationType={this.props.changeAnimation}
           onRequestClose={() => this.setState({modalVisible: false})}
           onBackdropPress={() => this.setState({modalVisible: false})}>
-          <View style={styles.container}>
-            <View style={styles.listDataContainerStyle}>
-              <View style={styles.pickerTitleContainerStyle}>
-                {this.props.showPickerTitle ? (
-                  <Text style={styles.pickerTitleTextStyle}>
-                    {' '}
-                    {this.props.pickerTitle}
-                  </Text>
-                ) : null}
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({modalVisible: false});
+            }}
+            style={{flex: 1}}>
+            <View style={styles.container}>
+              <View style={styles.listDataContainerStyle}>
+                <View style={styles.pickerTitleContainerStyle}>
+                  {this.props.showPickerTitle ? (
+                    <Text style={styles.pickerTitleTextStyle}>
+                      {' '}
+                      {this.props.pickerTitle}
+                    </Text>
+                  ) : null}
 
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => this.setState({modalVisible: false})}>
-                  <Image
-                    resizeMode="contain"
-                    style={styles.crossImageStyle}
-                    source={require('./res/ic_cancel_grey.png')}
-                  />
-                </TouchableOpacity>
-              </View>
-              {this.props.showSearchBar ? (
-                <View style={this.props.searchBarContainerStyle}>
-                  {/* <Image
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => this.setState({modalVisible: false})}>
+                    <Image
+                      resizeMode="contain"
+                      style={styles.crossImageStyle}
+                      source={require('./res/ic_cancel_grey.png')}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {this.props.showSearchBar ? (
+                  <View style={this.props.searchBarContainerStyle}>
+                    {/* <Image
                           resizeMode="contain"
                           style={styles.iconGPSStyle}
                           source={Images.ic_search}
                         /> */}
 
-                  <TextInput
-                    onChangeText={(text) =>
-                      this._searchFilterFunction(
-                        text,
-                        this.props.dummyDataSource,
-                      )
-                    }
-                    placeholder={this.props.searchBarPlaceHolder}
-                    style={styles.textInputStyle}
-                    underlineColorAndroid="transparent"
-                    keyboardType="default"
-                    returnKeyType={'done'}
-                    blurOnSubmit={true}
-                  />
-                </View>
-              ) : null}
+                    <TextInput
+                      onChangeText={(text) =>
+                        this._searchFilterFunction(
+                          text,
+                          this.props.dummyDataSource,
+                        )
+                      }
+                      placeholder={this.props.searchBarPlaceHolder}
+                      style={styles.textInputStyle}
+                      underlineColorAndroid="transparent"
+                      keyboardType="default"
+                      returnKeyType={'done'}
+                      blurOnSubmit={true}
+                    />
+                  </View>
+                ) : null}
 
-              <FlatList
-                style={styles.flatListStyle}
-                keyExtractor={(item) => item.name}
-                showsVerticalScrollIndicator={false}
-                extraData={this.state}
-                overScrollMode="never"
-                ItemSeparatorComponent={() =>
-                  this._flatListItemSeparator(this.props.itemSeparatorStyle)
-                }
-                keyboardShouldPersistTaps="always"
-                numColumns={1}
-                data={this.state.dataSource}
-                renderItem={({item, index}) =>
-                  this._renderItemListValues(item, index)
-                }
-              />
+                <FlatList
+                  style={styles.flatListStyle}
+                  keyExtractor={(item) => item.name}
+                  showsVerticalScrollIndicator={false}
+                  extraData={this.state}
+                  overScrollMode="never"
+                  ItemSeparatorComponent={() =>
+                    this._flatListItemSeparator(this.props.itemSeparatorStyle)
+                  }
+                  keyboardShouldPersistTaps="always"
+                  numColumns={1}
+                  data={this.state.dataSource}
+                  renderItem={({item, index}) =>
+                    this._renderItemListValues(item, index)
+                  }
+                />
+                {this.state.isMultiChoice ? (
+                  <View
+                    style={{
+                      flex: 1,
+                      height: 40,
+                      width: '100%',
+                      alignContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Button
+                      onPress={() => {
+                        this.setState({modalVisible: false});
+                      }}
+                      transparent
+                      full
+                      style={{alignContent: 'center', alignItems: 'center'}}>
+                      <Text style={{}}>Valider</Text>
+                    </Button>
+                  </View>
+                ) : null}
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
         </Modal>
       </View>
     );
@@ -519,7 +546,7 @@ const styles = StyleSheet.create({
   },
 
   flatListStyle: {
-    maxHeight: '85%',
+    maxHeight: '80%',
     minHeight: '35%',
   },
   iconGPSStyle: {
