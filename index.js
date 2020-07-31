@@ -305,6 +305,17 @@ export default class RNModalPicker extends PureComponent {
                       {this.props.pickerTitle}
                     </Text>
                   ) : null}
+                  {!this.state.isMultiChoice ? (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => this.setState({modalVisible: false})}>
+                      <Image
+                        resizeMode="contain"
+                        style={styles.crossImageStyle}
+                        source={require('./res/ic_cancel_grey.png')}
+                      />
+                    </TouchableOpacity>
+                  ) : null}
                 </View>
                 {this.props.showSearchBar ? (
                   <View
