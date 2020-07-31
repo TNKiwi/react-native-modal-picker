@@ -25,7 +25,9 @@ export default class RNModalPicker extends PureComponent {
       isMultiChoice: this.props.multiChoice,
       deleteAction: this.props.deleteAction,
       dataSource: [],
+      filteredDataSource: [],
       choices: [],
+      tmpchoices: [],
     };
   }
 
@@ -61,8 +63,7 @@ export default class RNModalPicker extends PureComponent {
                       }
                       return toReturn;
                     })
-                  : // this.getLabelForId(2,this.state.dataSource)
-                    defaultText
+                  : defaultText
                 : defaultText
               : defaultText}
           </Text>
@@ -74,11 +75,9 @@ export default class RNModalPicker extends PureComponent {
             style={{...deleteImageStyle}}
             onPress={() => {
               if (this.state.isMultiChoice) {
-                this.setState({choices: []});
+                this.setState({choices: [], tmpchoices: []});
               } else {
                 this._setSelectedIndex(null, null);
-                // this.setState({ selectedText: undefined });
-                // this.setState({selectedLabel: undefined});
               }
             }}>
             <Image
@@ -121,7 +120,10 @@ export default class RNModalPicker extends PureComponent {
     console.log(this.props.defaultChecked);
     this.setState({
       dataSource: this.props.dataSource,
+      filteredDataSource: this.props.dataSource,
       choices:
+        this.props.defaultChecked != null ? this.props.defaultChecked : [],
+      tmpchoices:
         this.props.defaultChecked != null ? this.props.defaultChecked : [],
     });
   }
@@ -135,10 +137,10 @@ export default class RNModalPicker extends PureComponent {
         return itemData.includes(textData);
       });
       this.setState({
-        dataSource: [...newData],
+        filteredDataSource: [...newData],
       });
     } else {
-      this.setState({dataSource: this.props.dataSource});
+      this.setState({filteredDataSource: this.props.filteredDataSource});
     }
   }
   _flatListItemSeparator(itemSeparatorStyle) {
@@ -191,7 +193,7 @@ export default class RNModalPicker extends PureComponent {
 
   isChecked(itemid) {
     var exist = false;
-    this.state.choices.forEach((item) => {
+    this.state.tmpchoices.forEach((item) => {
       if (item == itemid) {
         exist = true;
       }
@@ -200,8 +202,8 @@ export default class RNModalPicker extends PureComponent {
   }
 
   _setNotCheckedIndex(index, item) {
-    var tmp_choices = this.state.choices.filter((e) => e !== item.id);
-    this.setState({choices: tmp_choices});
+    var tmp_choices = this.state.tmpchoices.filter((e) => e !== item.id);
+    this.setState({tmpchoices: tmp_choices});
 
     this.props.selectedValue(index, item, tmp_choices);
 
@@ -209,9 +211,9 @@ export default class RNModalPicker extends PureComponent {
   }
 
   _setCheckedIndex(index, item) {
-    var tmp_choices = [...this.state.choices, item.id];
+    var tmp_choices = [...this.state.tmpchoices, item.id];
     this.setState({
-      choices: tmp_choices,
+      tmpchoices: tmp_choices,
     });
 
     this.props.selectedValue(index, item, tmp_choices);
@@ -263,13 +265,25 @@ export default class RNModalPicker extends PureComponent {
         <Modal
           visible={this.state.modalVisible}
           transparent={true}
-          onShow={() => this.setState({dataSource: this.props.dataSource})}
+          onShow={() =>
+            this.setState({
+              dataSource: this.props.dataSource,
+              filteredDataSource: this.props.dataSource,
+            })
+          }
           animationType={this.props.changeAnimation}
-          onRequestClose={() => this.setState({modalVisible: false})}
-          onBackdropPress={() => this.setState({modalVisible: false})}>
+          onRequestClose={() =>
+            this.setState({modalVisible: false, tmpchoices: this.state.choices})
+          }
+          onBackdropPress={() =>
+            this.setState({modalVisible: false, tmpchoices: this.state.choices})
+          }>
           <TouchableOpacity
             onPress={() => {
-              this.setState({modalVisible: false});
+              this.setState({
+                modalVisible: false,
+                tmpchoices: this.state.choices,
+              });
             }}
             style={{
               flex: 1,
@@ -291,16 +305,6 @@ export default class RNModalPicker extends PureComponent {
                       {this.props.pickerTitle}
                     </Text>
                   ) : null}
-
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => this.setState({modalVisible: false})}>
-                    <Image
-                      resizeMode="contain"
-                      style={styles.crossImageStyle}
-                      source={require('./res/ic_cancel_grey.png')}
-                    />
-                  </TouchableOpacity>
                 </View>
                 {this.props.showSearchBar ? (
                   <View
@@ -339,24 +343,45 @@ export default class RNModalPicker extends PureComponent {
                     }
                     keyboardShouldPersistTaps="always"
                     numColumns={1}
-                    data={this.state.dataSource}
+                    data={this.state.filteredDataSource}
                     renderItem={({item, index}) =>
                       this._renderItemListValues(item, index)
                     }
                   />
                   {this.state.isMultiChoice ? (
                     <View
+                      flexDirection="row"
                       style={{
                         // flex: 1,
-                        flex: 0,
+                        // flex: 0,
                         // height: 20,
-                        width: '100%',
-                        alignContent: 'center',
-                        alignItems: 'center',
+                        // width: '100%',
+                        alignContent: 'stretch',
+                        alignItems: 'stretch',
+                        justifyContent: 'space-around',
                       }}>
                       <Button
                         onPress={() => {
-                          this.setState({modalVisible: false});
+                          this.setState(
+                            {tmpchoices: [...this.state.choices]},
+                            function () {
+                              this.setState({modalVisible: false});
+                            },
+                          );
+                        }}
+                        transparent
+                        full
+                        style={{alignContent: 'center', alignItems: 'center'}}>
+                        <Text style={{color: '#EF4857'}}>Annuler</Text>
+                      </Button>
+                      <Button
+                        onPress={() => {
+                          this.setState(
+                            {choices: [...this.state.tmpchoices]},
+                            function () {
+                              this.setState({modalVisible: false});
+                            },
+                          );
                         }}
                         transparent
                         full
